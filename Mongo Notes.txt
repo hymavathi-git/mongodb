@@ -1,0 +1,303 @@
+// show dbs -> list all dbs
+// use dbName -> switch to dbName
+// use dbName -> create and switch to dbName
+// db -> current db
+
+db.books.insertMany([
+@@ -148,13 +148,113 @@ db.books.find({}, { _id: 0, name: 1, rating: 1 }).sort({ name: 1 }).pretty();
+
+//rating > 8, exclude - _id, include - name, rating, sort- rating - desc, limit - 5
+
+db.books.find({rating: { $gt: 8}}, { _id: 0, name: 1, rating: 1 }).sort({ rating: -1 }).limit(5).pretty();
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .limit(5)
+  .pretty();
+
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .skip(3)
+  .pretty();
+
+db.books.find({rating: { $gt: 8}}, { _id: 0, name: 1, rating: 1 }).sort({ rating: -1 }).skip(3).pretty();
+db.books.findOne({ rating: 8 });
+
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ name: 1, rating: -1 })
+  .pretty();
+
+db.books.findOne({rating: 8})
+//rating gt & lt
+
+db.books.find({ rating: { $gt: 10, $lte: 3 } }).pretty();
+
+db.books.find({rating: { $gt: 8}}, { _id: 0, name: 1, rating: 1 }).sort({ name:1, rating: -1 }).pretty();
+//Query used in Array
+db.orders.insertMany([
+  {
+    _id: 0,
+    item: "Steel Beam",
+    instock: [
+      { category: "A", qty: 10 },
+      { category: "B", qty: 5 },
+    ],
+  },
+  { _id: 1, item: "Steel Beam", instock: [{ category: "B", qty: 15 }] },
+  {
+    _id: 2,
+    item: "Steel Beam",
+    instock: [
+      { category: "A", qty: 50 },
+      { category: "B", qty: 15 },
+    ],
+  },
+  {
+    _id: 3,
+    item: "Iron Rod",
+    instock: [
+      { category: "B", qty: 20 },
+      { category: "C", qty: 5 },
+    ],
+  },
+  {
+    _id: 4,
+    item: "Iron Rod",
+    instock: [
+      { category: "A", qty: 20 },
+      { category: "B", qty: 60 },
+    ],
+  },
+  {
+    _id: 5,
+    item: "Iron Rod",
+    instock: [
+      { category: "C", qty: 30 },
+      { category: "B", qty: 5 },
+    ],
+  },
+]);
+
+db.orders.find().pretty();
+
+db.orders.findOne({ item: "Steel Beam" });
+
+//category A
+
+db.orders.find({ "instock.qty": { $gte: 50 } }).pretty();
+
+//$elemMatch - multiple conditions - array
+
+db.orders
+  .find({ instock: { $elemMatch: { qty: 10, category: "A" } } })
+  .pretty();
+
+db.orders
+  .find({ instock: { $elemMatch: { qty: { $gt: 10, $lte: 40 } } } })
+  .pretty();
+
+db.orders.find({ "instock.qty": { $gt: 10, $lte: 40 } }).pretty();
+
+db.orders.find({ "instock.qty": 10, "instock.category": "B" }).pretty();
+
+db.orders.find({ "instock.category": { $in: ["A", "B"] } }).pretty();
+
+db.orders.find({ $and: [{ "instock.qty": { $ne: 5, $exists: true } }] });
+
+db.orders.find({
+  $and: [
+    { $or: [{ "instock.qty": { $lt: 20 } }, { "instock.qty": { $gt: 80 } }] },
+   { "instock.category": "A"}
+  ],
+});
+
+
+
+
+db.orders.find().pretty()
+
+
+db.orders.updateOne({item: "Iron Rod"},{$set:{item:"Steel Rod"}})
+
+db.orders.updateOne({item: "Steel Rod"},{$set:{price:"20"}})
+ 182 changes: 182 additions & 0 deletions182  
+notes.md
+@@ -0,0 +1,182 @@
+## Commands
+
+## CRUD Queries
+
+Add docu =>
+insertOne - 1 document
+insertMany - many document
+
+## Read
+
+find
+findOne
+
+## Update
+
+updateOne
+updateMany
+replaceOne
+
+movies =[
+{
+name:"Ten",
+actor:["Hero1","Hero2]
+},
+{
+name:"Tenser",
+actor:["Heroine1","Heroine2]
+}
+]
+
+replaceOne({name:"Ten"})
+
+## delete
+
+deleteOne
+deleteMany
+
+why mongodb?
+document based storage
+index on any attribute
+Replication and availability
+Auto sharding
+Rich Queries
+Fast in reading data and updating data
+
+## Application
+
+Big data
+Content Management and delivery
+Mobile and social infrastructure
+User data Management
+Data hub
+
+## Embedded document
+
+have all related data in single doc
+
+## eg
+
+{
+\_id: ,
+emp_id:"4792475493284",
+personal_details:{
+first_name:"Jack",
+last_name:"Joe",
+date_of_birth:"2018-06-12"
+},
+contact:{
+email:"jack@gmail.com",
+phone:7594376365,
+}
+}
+
+## creating a schema
+
+1. design your schema to user requirement
+2. combine objects into one document - if you use them together
+3. do aggregation in schema
+
+## CRUD
+
+C - create - insertOne/insertMany
+R - Read - find/findOne
+U - Update - updateOne/updateMany
+D - Delete - deleteOne/deleteMany
+
+## mongodb
+
+Database best used for unstructured data - schema
+
+sql
+
+RollNo | Hindi | English | Computer |
+1 | 80 | | 90 |
+2 | | 70 |
+3 | 70 | |
+
+SQL MONGODB
+Database Database
+Table Collection
+Row Document
+Select find
+Insert Insert
+Update Update
+Delete Delete/Remove
+Joins LookUps
+Mutiple-tables nested Collection
+Avoid Repeation No issues with Repeation
+
+> > Server
+> > start the mongodb
+> > should always run if using database
+> > Shell
+> > Command line tool
+> > Use to verify the query
+default port - mongodb => 27017
+
+Window
+
+https://www.mongodb.com/try/download/community
+
+# steps to run Mongodb Server
+
+> > open cmd prompt
+> > Go inside the bin folder
+> > C:/program File/MOngoDb/Server/5.0.4/bin
+> > type mongod => kickstart the server
+> > Do not close this cmd
+# steps to run Mongodb Client
+
+> > open cmd prompt
+> > Go inside the bin folder
+> > C:/program File/MOngoDb/Server/5.0.4/bin
+> > type mongo - to go to shell
+# mac/linux
+
+> > open terminal
+> > mongod
+## Cloud
+
+https://cloud.mongodb.com/v2/631980b137fc734b0791104d#/clusters
+
+## Network Access
+
+> > Add IP address
+## DataBase Access
+
+> > Add New Database User
+mongodb+srv://sangeetha:rdKmLvXuBGIGYNFn@cluster0.09bk9ld.mongodb.net/?retryWrites=true&w=majority
+
+
+differen between mongodb and Cassandra
+
+MONGODB                                                           CASSANDRA
+1. document database system                                  |    distributed database system 
+2. C++                                                       |    Java
+3. store data in BSON and retrieve in JSON                   |    tabular format
+4. deal with JSON like document , access and faster          |    large amount of data community server
+5. administration is easy, case of failure          | high availability with no single point of failure      
+
+
+
+Couch DB
+=> docum orients, JSON format
+=> couchDb supports master replication 
+=> availability
+=> consistancy in performance
+
+Disadv
+-------
+=> single node db
+=> limited support 
+=> indexing  -> slow performance for complex queries
+=> limited trans
+
+ 59 changes: 0 additions & 59 deletions59  
